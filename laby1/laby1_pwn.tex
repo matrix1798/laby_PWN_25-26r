@@ -1,15 +1,17 @@
-
 \documentclass[12pt, a4paper]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[polish]{babel}
 \usepackage{amsmath} % Do wzorów matematycznych
-\usepackage{graphicx} % Do obrazków (tutaj jako placeholder)
+\usepackage{graphicx} % Do obrazków
 \usepackage{booktabs} % Do ładnych tabel
 \usepackage{tabularx} % Do tabel o ustalonej szerokości
 \usepackage{geometry} % Do ustawienia marginesów
 \usepackage{float} % Do wymuszenia pozycji tabel/rysunków [H]
-\usepackage{siunitx} % Do ładnego formatowania jednostek (opcjonalnie, tu użyję $...$)
+\usepackage{siunitx} % Do ładnego formatowania jednostek
+\usepackage{pgfplots} % Do generowania wykresów
+\pgfplotsset{compat=1.17} % Używanie nowoczesnej wersji pgfplots
+\sisetup{output-decimal-marker={,}} % Ustawienie przecinka jako separatora dziesiętnego
 
 % Ustawienie marginesów
 \geometry{
@@ -35,282 +37,286 @@
 	
 	Obliczenia dla tabel zostały wykonane w oparciu o następujące założenia:
 	\begin{itemize}
-		\item Rezystancja nominalna (bazowa) tensometrów $R_0 = 350 \, \Omega$.
+		\item Rezystancja nominalna (bazowa) tensometrów $R_0 = \SI{350}{\ohm}$.
 		\item Względna zmiana rezystancji $\Delta R / R$ jest obliczana jako:
 		$$ \frac{\Delta R}{R} = \frac{R - R_0}{R_0} = \frac{R - 350}{350} $$
-		\item Na podstawie danych, dla $\epsilon = 0.001$, $R = 350.7 \, \Omega$, co daje $\Delta R/R = 0.002$. Dla $\epsilon = 0.01$, $R = 357 \, \Omega$, co daje $\Delta R/R = 0.02$. Zależność ta to $\Delta R/R = 2\epsilon$, co oznacza, że stała tensometru (współczynnik $k$) wynosi \textbf{$k=2$}.
+		\item Na podstawie danych, dla $\epsilon = 0,001$, $R = \SI{350,7}{\ohm}$, co daje $\Delta R/R = 0,002$. Dla $\epsilon = 0,01$, $R = \SI{357}{\ohm}$, co daje $\Delta R/R = 0,02$. Zależność ta to $\Delta R/R = 2\epsilon$, co oznacza, że stała tensometru (współczynnik $k$) wynosi \textbf{$k=2$}.
 		\item Parametry $a$ i $b$ prostej aproksymacyjnej $y = ax + b$ zostały wyznaczone metodą regresji liniowej dla danych $(x, y) = (\epsilon, U_{wyj})$.
 		\item Błąd nieliniowości $\delta_{nl}$ obliczono jako:
-		$$ \delta_{nl} = \frac{\max|U_{wyj, pomiar} - U_{wyj, aproksy}|}{U_{wyj, max} - U_{wyj, min}} \times 100\% $$
+		$$ \delta_{nl} = \frac{\max|U_{wyj, pomiar} - U_{wyj, aproksy}|}{U_{wyj, max} - U_{wyj, min}} \cdot 100\% $$
 	\end{itemize}
 	
-	\subsection{1a. Ćwierćmostek, $\epsilon = 0.001-0.01$, $U_{zas} = 2.5 V$}
+	\subsection{1a. Ćwierćmostek, $\epsilon = 0,001-0,01$, $U_{zas} = \SI{2.5}{\volt}$}
 	
 	\begin{table}[H]
 		\centering
-		\caption{Pomiary dla ćwierćmostka przy $U_{zas} = 2.5 V$.}
+		\caption{Pomiary dla ćwierćmostka przy $U_{zas} = \SI{2.5}{\volt}$.}
 		\begin{tabular}{cccc}
 			\toprule
-			$\epsilon$ [-] & $R$ [$\Omega$] & $U_{wyj}$ [mV] & $\Delta R/R$ [-] \\
+			$\epsilon$ [-] & $R$ [\si{\ohm}] & $U_{wyj}$ [\si{\milli\volt}] & $\Delta R/R$ [-] \\
 			\midrule
-			0.001 & 350.7 & 22.327 & 0.002 \\
-			0.002 & 351.4 & 23.623 & 0.004 \\
-			0.003 & 352.1 & 24.868 & 0.006 \\
-			0.004 & 352.8 & 26.116 & 0.008 \\
-			0.005 & 353.5 & 27.356 & 0.010 \\
-			0.006 & 354.2 & 28.595 & 0.012 \\
-			0.007 & 354.9 & 29.836 & 0.014 \\
-			0.008 & 355.6 & 31.068 & 0.016 \\
-			0.009 & 356.3 & 32.302 & 0.018 \\
-			0.01 & 357 & 33.529 & 0.020 \\
+			0,001 & 350,7 & 22,327 & 0,002 \\
+			0,002 & 351,4 & 23,623 & 0,004 \\
+			0,003 & 352,1 & 24,868 & 0,006 \\
+			0,004 & 352,8 & 26,116 & 0,008 \\
+			0,005 & 353,5 & 27,356 & 0,010 \\
+			0,006 & 354,2 & 28,595 & 0,012 \\
+			0,007 & 354,9 & 29,836 & 0,014 \\
+			0,008 & 355,6 & 31,068 & 0,016 \\
+			0,009 & 356,3 & 32,302 & 0,018 \\
+			0,01 & 357 & 33,529 & 0,020 \\
 			\midrule
-			\multicolumn{2}{l}{\textbf{Prosta aproksymacyjna $y = ax + b$}} & \multicolumn{2}{l}{$a = 1244.4$, $b = 20.97$} \\
-			\multicolumn{2}{l}{\textbf{Błąd nieliniowości $U_{wyj} = f(\epsilon)$ [\%]}} & \multicolumn{2}{l}{$\approx 1.52 \%$} \\
+			\multicolumn{2}{l}{\textbf{Prosta aproksymacyjna $y = ax + b$}} & \multicolumn{2}{l}{$a = 1244,4$, $b = 20,97$} \\
+			\multicolumn{2}{l}{\textbf{Błąd nieliniowości $U_{wyj} = f(\epsilon)$ [\%]}} & \multicolumn{2}{l}{$\approx 1,52 \%$} \\
 			\bottomrule
 		\end{tabular}
 	\end{table}
 	
-	\subsection{1b. Ćwierćmostek, $\epsilon = 0.001-0.01$, $U_{zas} = 5 V$}
+	\subsection{1b. Ćwierćmostek, $\epsilon = 0,001-0,01$, $U_{zas} = \SI{5}{\volt}$}
 	
 	\begin{table}[H]
 		\centering
-		\caption{Pomiary dla ćwierćmostka przy $U_{zas} = 5 V$.}
+		\caption{Pomiary dla ćwierćmostka przy $U_{zas} = \SI{5}{\volt}$.}
 		\begin{tabular}{cccc}
 			\toprule
-			$\epsilon$ [-] & $R$ [$\Omega$] & $U_{wyj}$ [mV] & $\Delta R/R$ [-] \\
+			$\epsilon$ [-] & $R$ [\si{\ohm}] & $U_{wyj}$ [\si{\milli\volt}] & $\Delta R/R$ [-] \\
 			\midrule
-			0.001 & 350.7 & 44.921 & 0.002 \\
-			0.002 & 351.4 & 47.420 & 0.004 \\
-			0.003 & 352.1 & 49.910 & 0.006 \\
-			0.004 & 352.8 & 52.404 & 0.008 \\
-			0.005 & 353.5 & 54.885 & 0.010 \\
-			0.006 & 354.2 & 57.365 & 0.012 \\
-			0.007 & 354.9 & 59.845 & 0.014 \\
-			0.008 & 355.6 & 62.311 & 0.016 \\
-			0.009 & 356.3 & 64.774 & 0.018 \\
-			0.01 & 357 & 67.234 & 0.020 \\
+			0,001 & 350,7 & 44,921 & 0,002 \\
+			0,002 & 351,4 & 47,420 & 0,004 \\
+			0,003 & 352,1 & 49,910 & 0,006 \\
+			0,004 & 352,8 & 52,404 & 0,008 \\
+			0,005 & 353,5 & 54,885 & 0,010 \\
+			0,006 & 354,2 & 57,365 & 0,012 \\
+			0,007 & 354,9 & 59,845 & 0,014 \\
+			0,008 & 355,6 & 62,311 & 0,016 \\
+			0,009 & 356,3 & 64,774 & 0,018 \\
+			0,01 & 357 & 67,234 & 0,020 \\
 			\midrule
-			\multicolumn{2}{l}{\textbf{Prosta aproksymacyjna $y = ax + b$}} & \multicolumn{2}{l}{$a = 2548.8$, $b = 41.74$} \\
-			\multicolumn{2}{l}{\textbf{Błąd nieliniowości $U_{wyj} = f(\epsilon)$ [\%]}} & \multicolumn{2}{l}{$\approx 0.14 \%$} \\
+			\multicolumn{2}{l}{\textbf{Prosta aproksymacyjna $y = ax + b$}} & \multicolumn{2}{l}{$a = 2548,8$, $b = 41,74$} \\
+			\multicolumn{2}{l}{\textbf{Błąd nieliniowości $U_{wyj} = f(\epsilon)$ [\%]}} & \multicolumn{2}{l}{$\approx 0,14 \%$} \\
 			\bottomrule
 		\end{tabular}
 	\end{table}
 	
-	\subsection{1c. Ćwierćmostek, $\epsilon = 0.01-0.1$, $U_{zas} = 2.5 V$}
+	\subsection{1c. Ćwierćmostek, $\epsilon = 0,01-0,1$, $U_{zas} = \SI{2.5}{\volt}$}
 	
 	\begin{table}[H]
 		\centering
-		\caption{Pomiary dla ćwierćmostka przy $U_{zas} = 2.5 V$.}
+		\caption{Pomiary dla ćwierćmostka przy $U_{zas} = \SI{2.5}{\volt}$.}
 		\begin{tabular}{cccc}
 			\toprule
-			$\epsilon$ [-] & $R$ [$\Omega$] & $U_{wyj}$ [mV] & $\Delta R/R$ [-] \\
+			$\epsilon$ [-] & $R$ [\si{\ohm}] & $U_{wyj}$ [\si{\milli\volt}] & $\Delta R/R$ [-] \\
 			\midrule
-			0.01 & 357 & 33.533 & 0.02 \\
-			0.02 & 364 & 45.696 & 0.04 \\
-			0.03 & 371 & 57.625 & 0.06 \\
-			0.04 & 378 & 69.32 & 0.08 \\
-			0.05 & 385 & 80.783 & 0.10 \\
-			0.06 & 392 & 92.033 & 0.12 \\
-			0.07 & 399 & 103.062 & 0.14 \\
-			0.08 & 406 & 113.851 & 0.16 \\
-			0.09 & 413 & 124.474 & 0.18 \\
-			0.1 & 420 & 134.89 & 0.20 \\
+			0,01 & 357 & 33,533 & 0,02 \\
+			0,02 & 364 & 45,696 & 0,04 \\
+			0,03 & 371 & 57,625 & 0,06 \\
+			0,04 & 378 & 69,32 & 0,08 \\
+			0,05 & 385 & 80,783 & 0,10 \\
+			0,06 & 392 & 92,033 & 0,12 \\
+			0,07 & 399 & 103,062 & 0,14 \\
+			0,08 & 406 & 113,851 & 0,16 \\
+			0,09 & 413 & 124,474 & 0,18 \\
+			0,1 & 420 & 134,89 & 0,20 \\
 			\midrule
-			\multicolumn{2}{l}{\textbf{Prosta aproksymacyjna $y = ax + b$}} & \multicolumn{2}{l}{$a = 1126.9$, $b = 21.90$} \\
-			\multicolumn{2}{l}{\textbf{Błąd nieliniowości $U_{wyj} = f(\epsilon)$ [\%]}} & \multicolumn{2}{l}{$\approx 2.50 \%$} \\
+			\multicolumn{2}{l}{\textbf{Prosta aproksymacyjna $y = ax + b$}} & \multicolumn{2}{l}{$a = 1126,9$, $b = 21,90$} \\
+			\multicolumn{2}{l}{\textbf{Błąd nieliniowości $U_{wyj} = f(\epsilon)$ [\%]}} & \multicolumn{2}{l}{$\approx 2,50 \%$} \\
 			\bottomrule
 		\end{tabular}
 	\end{table}
 	
-	\subsection{1d. Ćwierćmostek (wpływ $U_{zas}$), $\epsilon = 0.01-0.1$, $U_{zas} = 5 V$}
+	\subsection{1d. Ćwierćmostek, $\epsilon = 0,01-0,1$, $U_{zas} = \SI{5}{\volt}$}
 	
 	\begin{table}[H]
 		\centering
-		\caption{Pomiary dla ćwierćmostka przy $U_{zas} = 5 V$.}
+		\caption{Pomiary dla ćwierćmostka przy $U_{zas} = \SI{5}{\volt}$.}
 		\begin{tabular}{cccc}
 			\toprule
-			$\epsilon$ [-] & $R$ [$\Omega$] & $U_{wyj}$ [mV] & $\Delta R/R$ [-] \\
+			$\epsilon$ [-] & $R$ [\si{\ohm}] & $U_{wyj}$ [\si{\milli\volt}] & $\Delta R/R$ [-] \\
 			\midrule
-			0.01 & 357 & 67.234 & 0.02 \\
-			0.02 & 364 & 91.561 & 0.04 \\
-			0.03 & 371 & 115.413 & 0.06 \\
-			0.04 & 378 & 138.792 & 0.08 \\
-			0.05 & 385 & 161.712 & 0.10 \\
-			0.06 & 392 & 184.207 & 0.12 \\
-			0.07 & 399 & 206.253 & 0.14 \\
-			0.08 & 406 & 227.835 & 0.16 \\
-			0.09 & 413 & 249.07 & 0.18 \\
-			0.1 & 420 & 269.91 & 0.20 \\
+			0,01 & 357 & 67,234 & 0,02 \\
+			0,02 & 364 & 91,561 & 0,04 \\
+			0,03 & 371 & 115,413 & 0,06 \\
+			0,04 & 378 & 138,792 & 0,08 \\
+			0,05 & 385 & 161,712 & 0,10 \\
+			0,06 & 392 & 184,207 & 0,12 \\
+			0,07 & 399 & 206,253 & 0,14 \\
+			0,08 & 406 & 227,835 & 0,16 \\
+			0,09 & 413 & 249,07 & 0,18 \\
+			0,1 & 420 & 269,91 & 0,20 \\
 			\midrule
-			\multicolumn{2}{l}{\textbf{Prosta aproksymacyjna $y = ax + b$}} & \multicolumn{2}{l}{$a = 2250.3$, $b = 44.18$} \\
-			\multicolumn{2}{l}{\textbf{Błąd nieliniowości $U_{wyj} = f(\epsilon)$ [\%]}} & \multicolumn{2}{l}{$\approx 2.45 \%$} \\
+			\multicolumn{2}{l}{\textbf{Prosta aproksymacyjna $y = ax + b$}} & \multicolumn{2}{l}{$a = 2250,3$, $b = 44,18$} \\
+			\multicolumn{2}{l}{\textbf{Błąd nieliniowości $U_{wyj} = f(\epsilon)$ [\%]}} & \multicolumn{2}{l}{$\approx 2,45 \%$} \\
 			\bottomrule
 		\end{tabular}
 	\end{table}
 	
 	\newpage
-	\subsection{2a. Półmostek, $\epsilon = 0.001-0.01$, $U_{zas} = 2.5 V$}
+	\subsection{2a. Półmostek, $\epsilon = 0,001-0,01$, $U_{zas} = \SI{2.5}{\volt}$}
 	
 	\begin{table}[H]
 		\centering
-		\caption{Pomiary dla półmostka przy $U_{zas} = 2.5 V$.}
+		\caption{Pomiary dla półmostka przy $U_{zas} = \SI{2.5}{\volt}$.}
 		\begin{tabular}{cccc}
 			\toprule
-			$\epsilon$ [-] & $R$ [$\Omega$] & $U_{wyj}$ [mV] & $\Delta R/R$ [-] \\
+			$\epsilon$ [-] & $R$ [\si{\ohm}] & $U_{wyj}$ [\si{\milli\volt}] & $\Delta R/R$ [-] \\
 			\midrule
-			0.001 & 350.7 & 45.367 & 0.002 \\
-			0.002 & 351.4 & 47.833 & 0.004 \\
-			0.003 & 352.1 & 50.337 & 0.006 \\
-			0.004 & 352.8 & 52.827 & 0.008 \\
-			0.005 & 353.5 & 55.223 & 0.010 \\
-			0.006 & 354.2 & 57.700 & 0.012 \\
-			0.007 & 354.9 & 60.135 & 0.014 \\
-			0.008 & 355.6 & 62.652 & 0.016 \\
-			0.009 & 356.3 & 65.104 & 0.018 \\
-			0.01 & 357 & 67.560 & 0.020 \\
+			0,001 & 350,7 & 45,367 & 0,002 \\
+			0,002 & 351,4 & 47,833 & 0,004 \\
+			0,003 & 352,1 & 50,337 & 0,006 \\
+			0,004 & 352,8 & 52,827 & 0,008 \\
+			0,005 & 353,5 & 55,223 & 0,010 \\
+			0,006 & 354,2 & 57,700 & 0,012 \\
+			0,007 & 354,9 & 60,135 & 0,014 \\
+			0,008 & 355,6 & 62,652 & 0,016 \\
+			0,009 & 356,3 & 65,104 & 0,018 \\
+			0,01 & 357 & 67,560 & 0,020 \\
 			\midrule
-			\multicolumn{2}{l}{\textbf{Prosta aproksymacyjna $y = ax + b$}} & \multicolumn{2}{l}{$a = 2465.7$, $b = 42.87$} \\
-			\multicolumn{2}{l}{\textbf{Błąd nieliniowości $U_{wyj} = f(\epsilon)$ [\%]}} & \multicolumn{2}{l}{$\approx 0.13 \%$} \\
+			\multicolumn{2}{l}{\textbf{Prosta aproksymacyjna $y = ax + b$}} & \multicolumn{2}{l}{$a = 2465,7$, $b = 42,87$} \\
+			\multicolumn{2}{l}{\textbf{Błąd nieliniowości $U_{wyj} = f(\epsilon)$ [\%]}} & \multicolumn{2}{l}{$\approx 0,13 \%$} \\
 			\bottomrule
 		\end{tabular}
 	\end{table}
 	
-	\subsection{2b. Półmostek (wpływ $U_{zas}$), $\epsilon = 0.001-0.01$, $U_{zas} = 5 V$}
+	\subsection{2b. Półmostek, $\epsilon = 0,001-0,01$, $U_{zas} = \SI{5}{\volt}$}
 	
 	\begin{table}[H]
 		\centering
-		\caption{Pomiary dla półmostka przy $U_{zas} = 5 V$.}
+		\caption{Pomiary dla półmostka przy $U_{zas} = \SI{5}{\volt}$.}
 		\begin{tabular}{cccc}
 			\toprule
-			$\epsilon$ [-] & $R$ [$\Omega$] & $U_{wyj}$ [mV] & $\Delta R/R$ [-] \\
+			$\epsilon$ [-] & $R$ [\si{\ohm}] & $U_{wyj}$ [\si{\milli\volt}] & $\Delta R/R$ [-] \\
 			\midrule
-			0.001 & 350.7 & 90.470 & 0.002 \\
-			0.002 & 351.4 & 95.464 & 0.004 \\
-			0.003 & 352.1 & 100.442 & 0.006 \\
-			0.004 & 352.8 & 105.428 & 0.008 \\
-			0.005 & 353.5 & 110.375 & 0.010 \\
-			0.006 & 354.2 & 115.333 & 0.012 \\
-			0.007 & 354.9 & 120.278 & 0.014 \\
-			0.008 & 355.6 & 125.21 & 0.016 \\
-			0.009 & 356.3 & 130.137 & 0.018 \\
-			0.01 & 357 & 135.038 & 0.020 \\
+			0,001 & 350,7 & 90,470 & 0,002 \\
+			0,002 & 351,4 & 95,464 & 0,004 \\
+			0,003 & 352,1 & 100,442 & 0,006 \\
+			0,004 & 352,8 & 105,428 & 0,008 \\
+			0,005 & 353,5 & 110,375 & 0,010 \\
+			0,006 & 354,2 & 115,333 & 0,012 \\
+			0,007 & 354,9 & 120,278 & 0,014 \\
+			0,008 & 355,6 & 125,21 & 0,016 \\
+			0,009 & 356,3 & 130,137 & 0,018 \\
+			0,01 & 357 & 135,038 & 0,020 \\
 			\midrule
-			\multicolumn{2}{l}{\textbf{Prosta aproksymacyjna $y = ax + b$}} & \multicolumn{2}{l}{$a = 4951.8$, $b = 85.50$} \\
-			\multicolumn{2}{l}{\textbf{Błąd nieliniowości $U_{wyj} = f(\epsilon)$ [\%]}} & \multicolumn{2}{l}{$\approx 0.04 \%$} \\
+			\multicolumn{2}{l}{\textbf{Prosta aproksymacyjna $y = ax + b$}} & \multicolumn{2}{l}{$a = 4951,8$, $b = 85,50$} \\
+			\multicolumn{2}{l}{\textbf{Błąd nieliniowości $U_{wyj} = f(\epsilon)$ [\%]}} & \multicolumn{2}{l}{$\approx 0,04 \%$} \\
 			\bottomrule
 		\end{tabular}
 	\end{table}
 	
-	\subsection{2c. Półmostek, $\epsilon = 0.01-0.1$, $U_{zas} = 2.5 V$}
+	\subsection{2c. Półmostek, $\epsilon = 0,01-0,1$, $U_{zas} = \SI{2.5}{\volt}$}
 	
 	\begin{table}[H]
 		\centering
-		\caption{Pomiary dla półmostka przy $U_{zas} = 2.5 V$.}
+		\caption{Pomiary dla półmostka przy $U_{zas} = \SI{2.5}{\volt}$.}
 		\begin{tabular}{cccc}
 			\toprule
-			$\epsilon$ [-] & $R$ [$\Omega$] & $U_{wyj}$ [mV] & $\Delta R/R$ [-] \\
+			$\epsilon$ [-] & $R$ [\si{\ohm}] & $U_{wyj}$ [\si{\milli\volt}] & $\Delta R/R$ [-] \\
 			\midrule
-			0.01 & 357 & 67.560 & 0.02 \\
-			0.02 & 364 & 91.880 & 0.04 \\
-			0.03 & 371 & 115.715 & 0.06 \\
-			0.04 & 378 & 139.1 & 0.08 \\
-			0.05 & 385 & 162.02 & 0.10 \\
-			0.06 & 392 & 184.532 & 0.12 \\
-			0.07 & 399 & 206.577 & 0.14 \\
-			0.08 & 406 & 228.12 & 0.16 \\
-			0.09 & 413 & 249.345 & 0.18 \\
-			0.1 & 420 & 270.171 & 0.20 \\
+			0,01 & 357 & 67,560 & 0,02 \\
+			0,02 & 364 & 91,880 & 0,04 \\
+			0,03 & 371 & 115,715 & 0,06 \\
+			0,04 & 378 & 139,1 & 0,08 \\
+			0,05 & 385 & 162,02 & 0,10 \\
+			0,06 & 392 & 184,532 & 0,12 \\
+			0,07 & 399 & 206,577 & 0,14 \\
+			0,08 & 406 & 228,12 & 0,16 \\
+			0,09 & 413 & 249,345 & 0,18 \\
+			0,1 & 420 & 270,171 & 0,20 \\
 			\midrule
-			\multicolumn{2}{l}{\textbf{Prosta aproksymacyjna $y = ax + b$}} & \multicolumn{2}{l}{$a = 2251.6$, $b = 45.09$} \\
-			\multicolumn{2}{l}{\textbf{Błąd nieliniowości $U_{wyj} = f(\epsilon)$ [\%]}} & \multicolumn{2}{l}{$\approx 0.02 \%$} \\
+			\multicolumn{2}{l}{\textbf{Prosta aproksymacyjna $y = ax + b$}} & \multicolumn{2}{l}{$a = 2251,6$, $b = 45,09$} \\
+			\multicolumn{2}{l}{\textbf{Błąd nieliniowości $U_{wyj} = f(\epsilon)$ [\%]}} & \multicolumn{2}{l}{$\approx 0,02 \%$} \\
 			\bottomrule
 		\end{tabular}
 	\end{table}
 	
-	\subsection{2d. Półmostek (wpływ $U_{zas}$), $\epsilon = 0.01-0.1$, $U_{zas} = 5 V$}
+	\subsection{2d. Półmostek, $\epsilon = 0,01-0,1$, $U_{zas} = \SI{5}{\volt}$}
 	
 	\begin{table}[H]
 		\centering
-		\caption{Pomiary dla półmostka przy $U_{zas} = 5 V$.}
+		\caption{Pomiary dla półmostka przy $U_{zas} = \SI{5}{\volt}$.}
 		\begin{tabular}{cccc}
 			\toprule
-			$\epsilon$ [-] & $R$ [$\Omega$] & $U_{wyj}$ [mV] & $\Delta R/R$ [-] \\
+			$\epsilon$ [-] & $R$ [\si{\ohm}] & $U_{wyj}$ [\si{\milli\volt}] & $\Delta R/R$ [-] \\
 			\midrule
-			0.01 & 357 & 135.037 & 0.02 \\
-			0.02 & 364 & 183.666 & 0.04 \\
-			0.03 & 371 & 231.267 & 0.06 \\
-			0.04 & 378 & 277.952 & 0.08 \\
-			0.05 & 385 & 323.744 & 0.10 \\
-			0.06 & 392 & 368.675 & 0.12 \\
-			0.07 & 399 & 412.732 & 0.14 \\
-			0.08 & 406 & 455.796 & 0.16 \\
-			0.09 & 413 & 498.21 & 0.18 \\
-			0.1 & 420 & 539.83 & 0.20 \\
+			0,01 & 357 & 135,037 & 0,02 \\
+			0,02 & 364 & 183,666 & 0,04 \\
+			0,03 & 371 & 231,267 & 0,06 \\
+			0,04 & 378 & 277,952 & 0,08 \\
+			0,05 & 385 & 323,744 & 0,10 \\
+			0,06 & 392 & 368,675 & 0,12 \\
+			0,07 & 399 & 412,732 & 0,14 \\
+			0,08 & 406 & 455,796 & 0,16 \\
+			0,09 & 413 & 498,21 & 0,18 \\
+			0,1 & 420 & 539,83 & 0,20 \\
 			\midrule
-			\multicolumn{2}{l}{\textbf{Prosta aproksymacyjna $y = ax + b$}} & \multicolumn{2}{l}{$a = 4431.5$, $b = 90.50$} \\
-			\multicolumn{2}{l}{\textbf{Błąd nieliniowości $U_{wyj} = f(\epsilon)$ [\%]}} & \multicolumn{2}{l}{$\approx 0.05 \%$} \\
+			\multicolumn{2}{l}{\textbf{Prosta aproksymacyjna $y = ax + b$}} & \multicolumn{2}{l}{$a = 4431,5$, $b = 90,50$} \\
+			\multicolumn{2}{l}{\textbf{Błąd nieliniowości $U_{wyj} = f(\epsilon)$ [\%]}} & \multicolumn{2}{l}{$\approx 0,05 \%$} \\
 			\bottomrule
 		\end{tabular}
 	\end{table}
 	
 	\newpage
 	\subsection{4. Wzorcowanie metodą obciążenia belki znaną siłą}
-	Przyjęto $E_{stal} = 2.1 \times 10^4 \, \text{kG/mm}^2$. \\
-	Dane belki: $l_0 = 250$ mm, $b_0 = 60$ mm, $h = 8$ mm. \\
+	Przyjęto $E_{stal} = \SI{2.1e4}{\kilo\gram\per\square\milli\meter}$. \\
+	Dane belki: $l_0 = \SI{250}{\milli\meter}$, $b_0 = \SI{60}{\milli\meter}$, $h = \SI{8}{\milli\meter}$. \\
 	Wzór na odkształcenie teoretyczne:
-	$$ \epsilon = \frac{6 l_0}{E h^2 b_0} \cdot P = \frac{6 \cdot 250}{ (2.1 \times 10^4) \cdot 8^2 \cdot 60} \cdot P \approx 1.86 \times 10^{-5} \cdot P \quad \rightarrow \quad \epsilon (10^{-6}) \approx 18.6 \cdot P $$
-	Wzory na $\Delta R/R$ (pomiarowe) dla $U_{zas} = 5V = 5000 mV$:
+	$$ \epsilon = \frac{6 l_0}{E h^2 b_0} \cdot P = \frac{6 \cdot 250}{ (2,1 \times 10^4) \cdot 8^2 \cdot 60} \cdot P \approx 1,86 \times 10^{-5} \cdot P \quad \rightarrow \quad \epsilon (10^{-6}) \approx 18,6 \cdot P $$
+	Wzory na $\Delta R/R$ (pomiarowe) dla $U_{zas} = \SI{5}{\volt} = \SI{5000}{\milli\volt}$:
 	\begin{itemize}
 		\item Półmostek: $\Delta R/R (10^{-6}) = \frac{2 \cdot \Delta U_{wyj}}{5000} \cdot 10^6 = 400 \cdot \Delta U_{wyj}$
 		\item Pełen mostek: $\Delta R/R (10^{-6}) = \frac{\Delta U_{wyj}}{5000} \cdot 10^6 = 200 \cdot \Delta U_{wyj}$
 	\end{itemize}
 	
-	\subsubsection{4a. Półmostek, $U_{zas} = 5 V$}
-	 
-	 \begin{table}[H]
-	 	\centering
-	 	\caption{Wzorcowanie półmostka metodą obciążenia siłą.}
-	 	\begin{tabular}{cccccc}
-	 		\toprule
-	 		$P$ [kG] & $U_{wyj}$ [mV] & $\epsilon (10^{-6})$ (teoret.) & $\Delta U_{wyj}$ [mV] & $\Delta R/R (10^{-6})$ (pomiar) & $k$ (pomiar) \\
-	 		\midrule
-	 		0 & 88.258\\
-	 		0.5 & 88.304 & \\
-	 		1.0 & 88.347 & \\
-	 		1.5 & 88.395 &  \\
-	 		2.0 & 88.44 &\\
-	 		3.0 & 88.512 & \\
-	 		4.0 & 88.641 &\\
-	 		5.0 & 88.712 & \\
-	 		\midrule
-	 		\multicolumn{4}{l}{\textbf{Prosta aproksymacyjna ($\Delta R/R = f(\epsilon)$)}} & \multicolumn{2}{l}{$a = $, $b = $} \\
-	 		\multicolumn{4}{l}{\textbf{Błąd nieliniowości $\Delta R/R = f(\epsilon)$ [\%]}} & \multicolumn{2}{l}{$\approx  \%$} \\
-	 		\bottomrule
-	 	\end{tabular}
-	 \end{table}
+	\subsubsection{4a. Półmostek, $U_{zas} = \SI{5}{\volt}$}
 	
-	\subsubsection{4b. Pełen mostek, $U_{zas} = 5 V$}
+	\begin{table}[H]
+		\centering
+		\caption{Wzorcowanie półmostka metodą obciążenia siłą.}
+		\resizebox{\textwidth}{!}{%
+			\begin{tabular}{cccccc}
+				\toprule
+				$P$ [\si{\kilo\gram}] & $U_{wyj}$ [\si{\milli\volt}] & $\epsilon (10^{-6})$ (teoret.) & $\Delta U_{wyj}$ [\si{\milli\volt}] & $\Delta R/R (10^{-6})$ (pomiar) & $k$ (pomiar) \\
+				\midrule
+				0 & 88,258 & 0 & 0 & 0 & - \\
+				0,5 & 88,304 & 9,3 & 0,046 & 18,4 & 1,978 \\
+				1,0 & 88,347 & 18,6 & 0,089 & 35,6 & 1,914 \\
+				1,5 & 88,395 & 27,9 & 0,137 & 54,8 & 1,964 \\
+				2,0 & 88,44 & 37,2 & 0,182 & 72,8 & 1,957 \\
+				3,0 & 88,512 & 55,8 & 0,254 & 101,6 & 1,821 \\
+				4,0 & 88,641 & 74,4 & 0,383 & 153,2 & 2,059 \\
+				5,0 & 88,712 & 93,0 & 0,454 & 181,6 & 1,953 \\
+				\midrule
+				\multicolumn{4}{l}{\textbf{Prosta aproksymacyjna ($\Delta R/R = f(\epsilon)$)}} & \multicolumn{2}{l}{$a = 1,968$, $b = -0,52$} \\
+				\multicolumn{4}{l}{\textbf{Błąd nieliniowości $\Delta R/R = f(\epsilon)$ [\%]}} & \multicolumn{2}{l}{$\approx 4,24 \%$} \\
+				\bottomrule
+			\end{tabular}
+		}
+	\end{table}
+	
+	\subsubsection{4b. Pełen mostek, $U_{zas} = \SI{5}{\volt}$}
 	
 	\begin{table}[H]
 		\centering
 		\caption{Wzorcowanie pełnego mostka metodą obciążenia siłą.}
-		\begin{tabular}{cccccc}
-			\toprule
-			$P$ [kG] & $U_{wyj}$ [mV] & $\epsilon (10^{-6})$ (teoret.) & $\Delta U_{wyj}$ [mV] & $\Delta R/R (10^{-6})$ (pomiar) & $k$ (pomiar) \\
-			\midrule
-			 0 & 1.607 \\
-			 0.5 & 1.708 \\
-			 1.0 & 1.808 \\
-			 1.5 & 1.899\\
-			 2.0 & 1.998\\
-			 3.0 & 2.188 \\
-			 4.0 & 2.379\\
-			 5.0 & 2.558 \\
-			\midrule
-			\multicolumn{4}{l}{\textbf{Prosta aproksymacyjna ($\Delta R/R = f(\epsilon)$)}} & \multicolumn{2}{l}{$a = $, $b = $} \\
-			\multicolumn{4}{l}{\textbf{Błąd nieliniowości $\Delta R/R = f(\epsilon)$ [\%]}} & \multicolumn{2}{l}{$\approx  \%$} \\
-			\bottomrule
-		\end{tabular}
+		\resizebox{\textwidth}{!}{%
+			\begin{tabular}{cccccc}
+				\toprule
+				$P$ [\si{\kilo\gram}] & $U_{wyj}$ [\si{\milli\volt}] & $\epsilon (10^{-6})$ (teoret.) & $\Delta U_{wyj}$ [\si{\milli\volt}] & $\Delta R/R (10^{-6})$ (pomiar) & $k$ (pomiar) \\
+				\midrule
+				0 & 1,607 & 0 & 0 & 0 & - \\
+				0,5 & 1,708 & 9,3 & 0,101 & 20,2 & 2,172 \\
+				1,0 & 1,808 & 18,6 & 0,201 & 40,2 & 2,161 \\
+				1,5 & 1,899 & 27,9 & 0,292 & 58,4 & 2,093 \\
+				2,0 & 1,998 & 37,2 & 0,391 & 78,2 & 2,102 \\
+				3,0 & 2,188 & 55,8 & 0,581 & 116,2 & 2,082 \\
+				4,0 & 2,379 & 74,4 & 0,772 & 154,4 & 2,075 \\
+				5,0 & 2,558 & 93,0 & 0,951 & 190,2 & 2,045 \\
+				\midrule
+				\multicolumn{4}{l}{\textbf{Prosta aproksymacyjna ($\Delta R/R = f(\epsilon)$)}} & \multicolumn{2}{l}{$a = 2,064$, $b = 0,88$} \\
+				\multicolumn{4}{l}{\textbf{Błąd nieliniowości $\Delta R/R = f(\epsilon)$ [\%]}} & \multicolumn{2}{l}{$\approx 1,38 \%$} \\
+				\bottomrule
+			\end{tabular}
+		}
 	\end{table}
 	
 	\newpage
@@ -318,25 +324,127 @@
 	
 	\subsection{Ćwierćmostek}
 	
-	\subsubsection{Charakterystyki $U_{wyj} = f(\epsilon)$ dla $\epsilon = 0.001-0.01$}
+	\subsubsection{Charakterystyki $U_{wyj} = f(\epsilon)$ dla $\epsilon = 0,001-0,01$}
 	
 	\begin{figure}[H]
 		\centering
-		\framebox(400,250){[Wykres: Ćwierćmostek, małe odkształcenia (0.001-0.01)]}
-		\caption{Charakterystyki $U_{wyj} = f(\epsilon)$ dla ćwierćmostka ($\epsilon = 0.001 \div 0.01$).  Linia górna: $U_{zas} = 5 V$, linia dolna: $U_{zas} = 2.5 V$.}
+		\begin{tikzpicture}
+			\begin{axis}[
+				title={Charakterystyki $U_{wyj} = f(\epsilon)$ dla ćwierćmostka},
+				xlabel={Odkształcenie $\epsilon$ [-]},
+				ylabel={$U_{wyj}$ [\si{\milli\volt}]},
+				xmin=0, xmax=0.011,
+				ymin=20, ymax=70,
+				legend pos=north west,
+				grid=major,
+				% --- Poprawka osi X ---
+				xtick={0, 0.002, 0.004, 0.006, 0.008, 0.01},
+				xticklabels={0, 0.2, 0.4, 0.6, 0.8, 1.0},
+				]
+				
+				% Uzas = 2.5V (Tabela 1)
+				\addplot[color=blue, mark=*, only marks] table {
+					x y
+					0.001 22.327 
+					0.002 23.623 
+					0.003 24.868 
+					0.004 26.116
+					0.005 27.356 
+					0.006 28.595 
+					0.007 29.836 
+					0.008 31.068
+					0.009 32.302 
+					0.01 33.529
+				};
+				\addlegendentry{$U_{zas} = \SI{2.5}{\volt}$}
+				
+				\addplot[color=blue, domain=0.001:0.01, dashed, forget plot] {1244.4*x + 20.97};
+				
+				
+				% Uzas = 5V (Tabela 2)
+				\addplot[color=red, mark=square*, only marks] table {
+					x y
+					0.001 44.921 
+					0.002 47.420 
+					0.003 49.910 
+					0.004 52.404
+					0.005 54.885 
+					0.006 57.365 
+					0.007 59.845 
+					0.008 62.311
+					0.009 64.774 
+					0.01 67.234
+				};
+				\addlegendentry{$U_{zas} = \SI{5}{\volt}$}
+				
+				\addplot[color=red, domain=0.001:0.01, dashed, forget plot] {2548.8*x + 41.74};
+				
+			\end{axis}
+		\end{tikzpicture}
+		\caption{Charakterystyki $U_{wyj} = f(\epsilon)$ dla ćwierćmostka ($\epsilon = 0,001 \div 0,01$). Linia górna (czerwona): $U_{zas} = \SI{5}{\volt}$, linia dolna (niebieska): $U_{zas} = \SI{2.5}{\volt}$.}
 	\end{figure}
 	
-	Wykres przedstawia dwie linie o silnym trendzie liniowym. Linia dla $5 V$ leży wyraźnie wyżej i ma większe nachylenie niż linia dla $2.5 V$.
+	Wykres przedstawia dwie linie o silnym trendzie liniowym. Linia dla $\SI{5}{\volt}$ leży wyraźnie wyżej i ma większe nachylenie niż linia dla $\SI{2.5}{\volt}$.
 	
-	\subsubsection{Charakterystyki $U_{wyj} = f(\epsilon)$ dla $\epsilon = 0.01-0.1$}
+	\subsubsection{Charakterystyki $U_{wyj} = f(\epsilon)$ dla $\epsilon = 0,01-0,1$}
 	
 	\begin{figure}[H]
 		\centering
-		\framebox(400,250){[Wykres: Ćwierćmostek, duże odkształcenia (0.01-0.1)]}
-		\caption{Charakterystyki $U_{wyj} = f(\epsilon)$ dla ćwierćmostka ($\epsilon = 0.01 \div 0.1$).  Linia górna: $U_{zas} = 5 V$, linia dolna: $U_{zas} = 2.5 V$ .}
+		\begin{tikzpicture}
+			\begin{axis}[
+				title={Charakterystyki $U_{wyj} = f(\epsilon)$ dla ćwierćmostka},
+				xlabel={Odkształcenie $\epsilon$ [-]},
+				ylabel={$U_{wyj}$ [\si{\milli\volt}]},
+				xmin=0, xmax=0.11,
+				ymin=20, ymax=300,
+				legend pos=north west,
+				grid=major,
+				xtick={0, 0.02, 0.04, 0.06, 0.08, 0.1},
+				xticklabels={0, 0.2, 0.4, 0.6, 0.8, 1.0},
+				]
+				
+				% Uzas = 2.5V (Tabela 3)
+				\addplot[color=blue, mark=*, only marks] table {
+					x y
+					0.01 33.533 
+					0.02 45.696 
+					0.03 57.625 
+					0.04 69.32
+					0.05 80.783 
+					0.06 92.033 
+					0.07 103.062 
+					0.08 113.851
+					0.09 124.474 
+					0.1 134.89
+				};
+				\addlegendentry{$U_{zas} = \SI{2.5}{\volt}$}
+				
+				\addplot[color=blue, domain=0.01:0.1, dashed, forget plot] {1126.9*x + 21.90};
+				
+				% Uzas = 5V (Tabela 4)
+				\addplot[color=red, mark=square*, only marks] table {
+					x y
+					0.01 67.234 
+					0.02 91.561 
+					0.03 115.413 
+					0.04 138.792
+					0.05 161.712 
+					0.06 184.207 
+					0.07 206.253 
+					0.08 227.835
+					0.09 249.07 
+					0.1 269.91
+				};
+				\addlegendentry{$U_{zas} = \SI{5}{\volt}$}
+				
+				\addplot[color=red, domain=0.01:0.1, dashed, forget plot] {2250.3*x + 44.18};
+				
+			\end{axis}
+		\end{tikzpicture}
+		\caption{Charakterystyki $U_{wyj} = f(\epsilon)$ dla ćwierćmostka ($\epsilon = 0,01 \div 0,1$). Linia górna (czerwona): $U_{zas} = \SI{5}{\volt}$, linia dolna (niebieska): $U_{zas} = \SI{2.5}{\volt}$.}
 	\end{figure}
 	
-	Podobnie jak na poprzednim wykresie, linia dla $5 V$ ma około dwukrotnie większe nachylenie. Obie charakterystyki wykazują lekkie zakrzywienie (nieliniowość).
+	Podobnie jak na poprzednim wykresie, linia dla $\SI{5}{\volt}$ ma około dwukrotnie większe nachylenie. Obie charakterystyki wykazują lekkie zakrzywienie (nieliniowość).
 	
 	\subsubsection{Wnioski}
 	
@@ -344,38 +452,137 @@
 		\item \textbf{Czy napięcie zasilania $U_{zas}$ wpływa na czułość?} \\
 		\textbf{Tak.} Czułość ($S = dU_{wyj}/d\epsilon$) jest wprost proporcjonalna do napięcia zasilania.
 		\begin{itemize}
-			\item Dla $\epsilon=0.001-0.01$: $S_{2.5V} \approx 1244$, $S_{5V} \approx 2549$. Stosunek: $2549 / 1244 \approx 2.05$.
-			\item Dla $\epsilon=0.01-0.1$: $S_{2.5V} \approx 1127$, $S_{5V} \approx 2250$. Stosunek: $2250 / 1127 \approx 2.00$.
+			\item Dla $\epsilon=0,001-0,01$: $S_{2.5V} \approx 1244$, $S_{5V} \approx 2549$. Stosunek: $2549 / 1244 \approx 2,05$.
+			\item Dla $\epsilon=0,01-0,1$: $S_{2.5V} \approx 1127$, $S_{5V} \approx 2250$. Stosunek: $2250 / 1127 \approx 2,00$.
 		\end{itemize}
-		Podwojenie napięcia zasilania skutkuje podwojeniem czułości.  Wynika to z formuły dla ćwierćmostka $U_{wyj} \approx \frac{1}{4} \frac{\Delta R}{R} U_{zas} = \frac{1}{4} k \epsilon U_{zas}$.
+		Podwojenie napięcia zasilania skutkuje podwojeniem czułości. Wynika to z formuły dla ćwierćmostka $U_{wyj} \approx \frac{1}{4} \frac{\Delta R}{R} U_{zas} = \frac{1}{4} k \epsilon U_{zas}$.
 		
 		\item \textbf{Czy błąd nieliniowości zależy od zakresu zmian $\epsilon$?} \\
-		 \textbf{Tak.} Układ ćwierćmostka jest nieliniowy, co wynika z pełnego wzoru: $U_{wyj} = \frac{\Delta R/R}{4+2(\Delta R/R)} U_{zas}$.
+		\textbf{Tak.} Układ ćwierćmostka jest nieliniowy, co wynika z pełnego wzoru: $U_{wyj} = \frac{\Delta R/R}{4+2(\Delta R/R)} U_{zas}$.
 		\begin{itemize}
-			\item Dla $U_{zas} = 2.5 V$: Błąd wzrósł z $\approx 1.52 \%$ (małe $\epsilon$) do $\approx 2.50 \%$ (duże $\epsilon$).
-			\item Dla $U_{zas} = 5 V$: Błąd wzrósł z $\approx 0.14 \%$ (małe $\epsilon$) do $\approx 2.45 \%$ (duże $\epsilon$).
+			\item Dla $U_{zas} = \SI{2.5}{\volt}$: Błąd wzrósł z $\approx 1,52 \%$ (małe $\epsilon$) do $\approx 2,50 \%$ (duże $\epsilon$).
+			\item Dla $U_{zas} = \SI{5}{\volt}$: Błąd wzrósł z $\approx 0,14 \%$ (małe $\epsilon$) do $\approx 2,45 \%$ (duże $\epsilon$).
 		\end{itemize}
-		Im większy zakres $\epsilon$, tym bardziej człon $2(\Delta R/R)$ w mianowniku wpływa na wynik, powodując wzrost nieliniowości.
+		Im większy zakres $\epsilon$ (a tym samym $\Delta R/R$), tym bardziej człon $2(\Delta R/R)$ w mianowniku wpływa na wynik, powodując wzrost nieliniowości.
 	\end{itemize}
 	
 	\subsection{Półmostek}
 	
-	\subsubsection{Charakterystyki $U_{wyj} = f(\epsilon)$ dla $\epsilon = 0.001-0.01$}
+	\subsubsection{Charakterystyki $U_{wyj} = f(\epsilon)$ dla $\epsilon = 0,001-0,01$}
 	
 	\begin{figure}[H]
 		\centering
-		\framebox(400,250){[Wykres: Półmostek, małe odkształcenia (0.001-0.01)]}
-		\caption{Charakterystyki $U_{wyj} = f(\epsilon)$ dla półmostka ($\epsilon = 0.001 \div 0.01$).  Linia górna: $U_{zas} = 5 V$, linia dolna: $U_{zas} = 2.5 V$.}
+		\begin{tikzpicture}
+			\begin{axis}[
+				title={Charakterystyki $U_{wyj} = f(\epsilon)$ dla półmostka},
+				xlabel={Odkształcenie $\epsilon$ [-]},
+				ylabel={$U_{wyj}$ [\si{\milli\volt}]},
+				xmin=0, xmax=0.011,
+				legend pos=north west,
+				grid=major,
+				% --- Poprawka osi X ---
+				xtick={0, 0.002, 0.004, 0.006, 0.008, 0.01},
+				xticklabels={0, 0.2, 0.4, 0.6, 0.8, 1.0},
+				]
+				
+				% Uzas = 2.5V (Tabela 5)
+				\addplot[color=blue, mark=*, only marks] table {
+					x y
+					0.001 45.367 
+					0.002 47.833 
+					0.003 50.337 
+					0.004 52.827
+					0.005 55.223 
+					0.006 57.700 
+					0.007 60.135 
+					0.008 62.652
+					0.009 65.104 
+					0.01 67.560
+				};
+				\addlegendentry{$U_{zas} = \SI{2.5}{\volt}$}
+				
+				\addplot[color=blue, domain=0.001:0.01, dashed, forget plot] {2465.7*x + 42.87};
+				
+				% Uzas = 5V (Tabela 6)
+				\addplot[color=red, mark=square*, only marks] table {
+					x y
+					0.001 90.470 
+					0.002 95.464 
+					0.003 100.442 
+					0.004 105.428
+					0.005 110.375 
+					0.006 115.333 
+					0.007 120.278 
+					0.008 125.21
+					0.009 130.137 
+					0.01 135.038
+				};
+				\addlegendentry{$U_{zas} = \SI{5}{\volt}$}
+				
+				\addplot[color=red, domain=0.001:0.01, dashed, forget plot] {4951.8*x + 85.50};
+				
+			\end{axis}
+		\end{tikzpicture}
+		\caption{Charakterystyki $U_{wyj} = f(\epsilon)$ dla półmostka ($\epsilon = 0,001 \div 0,01$). Linia górna (czerwona): $U_{zas} = \SI{5}{\volt}$, linia dolna (niebieska): $U_{zas} = \SI{2.5}{\volt}$.}
 	\end{figure}
 	
-	Wykres przedstawia dwie linie o bardzo wysokiej liniowości. Czułość dla $5 V$ jest dwukrotnie większa niż dla $2.5 V$.
+	Wykres przedstawia dwie linie o bardzo wysokiej liniowości. Czułość dla $\SI{5}{\volt}$ jest dwukrotnie większa niż dla $\SI{2.5}{\volt}$.
 	
-	\subsubsection{Charakterystyki $U_{wyj} = f(\epsilon)$ dla $\epsilon = 0.01-0.1$}
+	\subsubsection{Charakterystyki $U_{wyj} = f(\epsilon)$ dla $\epsilon = 0,01-0,1$}
 	
 	\begin{figure}[H]
 		\centering
-		\framebox(400,250){[Wykres: Półmostek, duże odkształcenia (0.01-0.1)]}
-		\caption{Charakterystyki $U_{wyj} = f(\epsilon)$ dla półmostka ($\epsilon = 0.01 \div 0.1$).  Linia górna: $U_{zas} = 5 V$, linia dolna: $U_{zas} = 2.5 V$.}
+		\begin{tikzpicture}
+			\begin{axis}[
+				title={Charakterystyki $U_{wyj} = f(\epsilon)$ dla półmostka},
+				xlabel={Odkształcenie $\epsilon$ [-]},
+				ylabel={$U_{wyj}$ [\si{\milli\volt}]},
+				xmin=0, xmax=0.11,
+				legend pos=north west,
+				grid=major,
+				xtick={0, 0.02, 0.04, 0.06, 0.08, 0.1},
+				xticklabels={0, 0.2, 0.4, 0.6, 0.8, 1.0},
+				]
+				
+				% Uzas = 2.5V (Tabela 7)
+				\addplot[color=blue, mark=*, only marks] table {
+					x y
+					0.01 67.560 
+					0.02 91.880 
+					0.03 115.715 
+					0.04 139.1
+					0.05 162.02 
+					0.06 184.532 
+					0.07 206.577 
+					0.08 228.12
+					0.09 249.345 
+					0.1 270.171
+				};
+				\addlegendentry{$U_{zas} = \SI{2.5}{\volt}$}
+				
+				\addplot[color=blue, domain=0.01:0.1, dashed, forget plot] {2251.6*x + 45.09};
+				
+				% Uzas = 5V (Tabela 8)
+				\addplot[color=red, mark=square*, only marks] table {
+					x y
+					0.01 135.037 
+					0.02 183.666 
+					0.03 231.267 
+					0.04 277.952
+					0.05 323.744 
+					0.06 368.675 
+					0.07 412.732 
+					0.08 455.796
+					0.09 498.21 
+					0.1 539.83
+				};
+				\addlegendentry{$U_{zas} = \SI{5}{\volt}$}
+				
+				\addplot[color=red, domain=0.01:0.1, dashed, forget plot] {4431.5*x + 90.50};
+				
+			\end{axis}
+		\end{tikzpicture}
+		\caption{Charakterystyki $U_{wyj} = f(\epsilon)$ dla półmostka ($\epsilon = 0,01 \div 0,1$). Linia górna (czerwona): $U_{zas} = \SI{5}{\volt}$, linia dolna (niebieska): $U_{zas} = \SI{2.5}{\volt}$.}
 	\end{figure}
 	
 	Zależność pozostaje wysoce liniowa nawet w dużym zakresie $\epsilon$.
@@ -386,38 +593,98 @@
 		\item \textbf{Czy napięcie zasilania $U_{zas}$ wpływa na czułość?} \\
 		\textbf{Tak.} Podobnie jak w ćwierćmostku, czułość jest wprost proporcjonalna do $U_{zas}$.
 		\begin{itemize}
-			\item Dla $\epsilon=0.001-0.01$: $S_{2.5V} \approx 2466$, $S_{5V} \approx 4952$. Stosunek: $\approx 2.01$.
-			\item Dla $\epsilon=0.01-0.1$: $S_{2.5V} \approx 2252$, $S_{5V} \approx 4432$. Stosunek: $\approx 1.97$.
+			\item Dla $\epsilon=0,001-0,01$: $S_{2.5V} \approx 2466$, $S_{5V} \approx 4952$. Stosunek: $\approx 2,01$.
+			\item Dla $\epsilon=0,01-0,1$: $S_{2.5V} \approx 2252$, $S_{5V} \approx 4432$. Stosunek: $\approx 1,97$.
 		\end{itemize}
 		Podwojenie napięcia zasilania podwaja czułość.
 		
 		\item \textbf{Czy błąd nieliniowości zależy od zakresu zmian $\epsilon$?} \\
-		 \textbf{Nie (w sposób znaczący).} W układzie półmostka kompensacyjnego ($\epsilon_1 = \epsilon$, $\epsilon_2 = -\epsilon$), wzór teoretyczny $U_{wyj}=\frac{1}{2}(\frac{k\epsilon_1 - k\epsilon_2}{2+k\epsilon_1+k\epsilon_2})U_{pot}$ upraszcza się, ponieważ człony nieliniowe $k\epsilon_1$ i $k\epsilon_2$ w mianowniku znoszą się. Obliczone błędy nieliniowości są bardzo małe (wszystkie $\delta_{nl} < 0.15 \%$) i nie wykazują systematycznego wzrostu wraz z zakresem $\epsilon$.
+		\textbf{Nie (w sposób znaczący).} W układzie półmostka kompensacyjnego (założenie $\epsilon_1 = \epsilon, \epsilon_2 = -\epsilon$), wzór teoretyczny $U_{wyj}=\frac{1}{2}(\frac{k\epsilon_1 - k\epsilon_2}{2+k\epsilon_1+k\epsilon_2})U_{pot}$ upraszcza się. Człony nieliniowe $k\epsilon_1$ i $k\epsilon_2$ w mianowniku mają przeciwne znaki i w idealnym przypadku się znoszą, linearyzując charakterystykę. Obliczone błędy nieliniowości są bardzo małe (wszystkie $\delta_{nl} < \SI{0,15}{\percent}$) i nie wykazują systematycznego wzrostu wraz z zakresem $\epsilon$.
 	\end{itemize}
 	
-	\subsection{Wzorcowanie siłą i uwagi końcowe}
-	
-	\subsubsection{Wzorcowanie metodą obciążenia siłą}
+	\subsection{Wzorcowanie metodą obciążenia belki znaną siłą}
 	
 	\begin{figure}[H]
 		\centering
-		\framebox(400,250){[Wykres: Wzorcowanie siłą, pełen mostek (U vs Epsilon)]}
-		\caption{Charakterystyka $U_{wyj} = f(\epsilon)$ dla pełnego mostka.}
+		\begin{tikzpicture}
+			\begin{axis}[
+				title={Charakterystyki $\Delta U_{wyj} = f(\epsilon)$ (Wzorcowanie siłą)},
+				xlabel={Odkształcenie teoretyczne $\epsilon~(10^{-6})$},
+				ylabel={Zmiana napięcia $\Delta U_{wyj}$ [mV]},
+				legend pos=north west,
+				grid=major,
+				width=0.8\textwidth,
+				]
+				
+				% Dane dla Półmostka (Tabela 9)
+				\addplot+[
+				color=blue,
+				mark=*,
+				mark options={solid, fill=blue},
+				] coordinates {
+					(0, 0)
+					(9.3, 0.046)
+					(18.6, 0.089)
+					(27.9, 0.137)
+					(37.2, 0.182)
+					(55.8, 0.254)
+					(74.4, 0.383)
+					(93.0, 0.454)
+				};
+				\addlegendentry{Półmostek}
+				
+				% Dane dla Pełnego Mostka (Tabela 10)
+				\addplot+[
+				color=red,
+				mark=square*,
+				mark options={solid, fill=red},
+				] coordinates {
+					(0, 0)
+					(9.3, 0.101)
+					(18.6, 0.201)
+					(27.9, 0.292)
+					(37.2, 0.391)
+					(55.8, 0.581)
+					(74.4, 0.772)
+					(93.0, 0.951)
+				};
+				\addlegendentry{Pełen mostek}
+				
+			\end{axis}
+		\end{tikzpicture}
+		\caption{Porównanie charakterystyk $\Delta U_{wyj} = f(\epsilon)$ dla półmostka i pełnego mostka przy $U_{zas}=5~V$.}
 	\end{figure}
 	
-	Dane dla półmostka (zad. 4a) były błędne. Porównanie teoretyczne:
-	\begin{itemize}
-		 \item Półmostek (1 rozciągany, 1 ściskany): $S_{pół} \propto \frac{k\epsilon}{2} U_{zas}$.
-		 \item Pełen mostek (2 rozciągane, 2 ściskane): $S_{pełen} \propto k\epsilon \cdot U_{zas}$.
-	\end{itemize}
-	\textbf{Większą czułością charakteryzuje się układ pełnego mostka} (2x większą niż półmostek i 4x większą niż ćwierćmostek).
+	Na wspólnym wykresie przedstawiono charakterystyki $\Delta U_{wyj} = f(\epsilon)$ dla układu półmostka i pełnego mostka. Porównano zmianę napięcia wyjściowego $\Delta U_{wyj}$ (wartość pomiarowa minus offset przy $P=0$) w funkcji obliczonego teoretycznego odkształcenia $\epsilon$. Z wykresu wyraźnie widać, że większą czułością charakteryzuje się układ pełnego mostka. Nachylenie jego charakterystyki jest widocznie większe niż dla układu półmostka.
 	
-	\subsubsection{Komentarze i uwagi}
+		\begin{itemize}
+			\item \textbf{Półmostek} (różnicowy, $\epsilon_1 = \epsilon, \epsilon_2 = -\epsilon$):
+			$$ U_{wyj} \approx \frac{1}{2} \left( \frac{k\epsilon_1 - k\epsilon_2}{2} \right) U_{pol} = \frac{1}{2} \left( \frac{k\epsilon - (-k\epsilon)}{2} \right) U_{pol} = \frac{1}{2} k \epsilon U_{pol} $$
+			Czułość $S_{pol} = dU_{wyj}/d\epsilon \approx \frac{1}{2} k U_{pol}$.
+			
+			\item \textbf{Pełen mostek} (różnicowy, $\epsilon_1 = \epsilon, \epsilon_4 = \epsilon, \epsilon_2 = -\epsilon, \epsilon_3 = -\epsilon$):
+			$$ U_{wyj} \approx \frac{1}{2} \left( \frac{k\epsilon_1 - k\epsilon_2 - k\epsilon_3 + k\epsilon_4}{2} \right) U_{pol} = \frac{1}{2} \left( \frac{k\epsilon - (-k\epsilon) - (-k\epsilon) + k\epsilon}{2} \right) U_{pol} = k \epsilon U_{pol} $$
+			Czułość $S_{pelen} = dU_{wyj}/d\epsilon \approx k U_{pol}$.
+		\end{itemize}
+	
+	Teoretycznie, układ pełnego mostka jest dwukrotnie czulszy niż układ półmostka (oraz czterokrotnie czulszy niż ćwierćmostek), co znajduje potwierdzenie na wykresie, gdzie nachylenie czerwonej linii ($S_{pelen}$) jest w przybliżeniu dwa razy większe niż niebieskiej ($S_{pol}$).
+	
+	\subsection{Wnioski końcowe}
+	
+	Na podstawie przeprowadzonych badań i analizy wyników można sformułować następujące wnioski:
+	
 	\begin{enumerate}
-		\item Pomiary laboratoryjne potwierdziły, że czułość mostka tensometrycznego jest wprost proporcjonalna do napięcia zasilania $U_{zas}$.
-		\item Wykazano kluczową zaletę układów różnicowych (półmostek, pełen mostek) nad ćwierćmostkiem: \textbf{kompensację nieliniowości}.  Błąd nieliniowości dla ćwierćmostka rósł wraz z zakresem odkształceń, podczas gdy dla półmostka pozostawał pomijalnie mały.
-		\item Układy półmostka i pełnego mostka oferują wyższą czułość niż ćwierćmostek.
+		\item \textbf{Wpływ napięcia zasilania:} Pomiary laboratoryjne potwierdziły, że czułość mostka tensometrycznego (zarówno w konfiguracji ćwierćmostka, jak i półmostka) jest \textbf{wprost proporcjonalna} do napięcia zasilania $U_{zas}$. Podwojenie napięcia zasilania (z 2,5 V do 5 V) skutkowało w każdym przypadku około dwukrotnym wzrostem czułości (nachylenia charakterystyki $U_{wyj} = f(\epsilon)$).
+		
+		\item \textbf{Liniowość układów:} Wykazano kluczową zaletę układów różnicowych (półmostek) nad ćwierćmostkiem. 
+		\begin{itemize}
+			\item Układ \textbf{ćwierćmostka} jest z natury nieliniowy, co wynika z obecności członu $\Delta R$ w mianowniku wzoru $U_{wyj} = \frac{\Delta R/R}{4+2(\Delta R/R)}U_{zas}$. Błąd nieliniowości dla tego układu rósł wraz z zakresem mierzonych odkształceń, osiągając $\approx 2,5\%$.
+			\item W układzie \textbf{półmostka} (kompensacyjnego, $\epsilon_2 = -\epsilon_1$), człony nieliniowe w mianowniku wzoru $U_{wyj} = \frac{1}{2}(\frac{k\epsilon_1 - k\epsilon_2}{2+k\epsilon_1+k\epsilon_2})U_{pol}$ znoszą się ($k\epsilon_1+k\epsilon_2 \approx 0$). Powoduje to \textbf{skuteczną linearyzację} charakterystyki. Obliczone błędy nieliniowości dla półmostka były pomijalnie małe (rzędu $\approx 0,02\%-0,13\%$).
+		\end{itemize}
+		
+		\item \textbf{Czułość układów:} Układy różnicowe (półmostek i pełen mostek) oferują znacznie wyższą czułość niż ćwierćmostek. Jak wykazano w sekcji 2.3, czułość pełnego mostka jest teoretycznie 2x większa niż półmostka i 4x większa niż ćwierćmostka.
+		
+		\item \textbf{Wartość stałej $k$:} Na podstawie danych kalibracyjnych (np. dla $\epsilon=0,01, R=357~\Omega$) wyznaczono stałą $k$ (czułość tensometru) jako $k = (\Delta R/R) / \epsilon = 0,02 / 0,01 = 2$. Pomiary wzorcowania siłą również dały zbliżone wyniki (średnio $k \approx 1,97$ dla półmostka i $k \approx 2,06$ dla pełnego mostka).
 	\end{enumerate}
 	
 \end{document}
-```
